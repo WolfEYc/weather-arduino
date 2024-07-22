@@ -2,18 +2,18 @@
 namespace bluetooth
 {
 #define BUFF_SIZE 4096
-#define DEVICE_PREFIX "Thermostatter "
 #define SUFFIX_SIZE 6
 
+    const String prefix = "Thermostatter ";
     String generate_name()
     {
-        auto suffix = String(SUFFIX_SIZE);
+        StringSumHelper concater = prefix;
         for (int i = 0; i < SUFFIX_SIZE; i++)
         {
-            suffix[i] = '0' + random(10);
+            concater += String(random(10));
         }
 
-        return DEVICE_PREFIX + suffix;
+        return concater;
     }
 
     BLEService thermostat_service("180A"); // create service: "Device Information"
