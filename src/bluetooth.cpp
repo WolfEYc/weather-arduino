@@ -1,10 +1,25 @@
 #include "bluetooth.h"
 namespace bluetooth
 {
-    BLEService carService("180A"); // create service: "Device Information"
+#define BUFF_SIZE 4096
+#define DEVICE_PREFIX "Thermostatter "
+#define SUFFIX_SIZE 6
+
+    String generate_name()
+    {
+        auto suffix = String(SUFFIX_SIZE);
+        for (int i = 0; i < SUFFIX_SIZE; i++)
+        {
+            suffix[i] = '0' + random(10);
+        }
+
+        return DEVICE_PREFIX + suffix;
+    }
+
+    BLEService thermostat_service("180A"); // create service: "Device Information"
 
     // create direction control characteristic and allow remote device to read and write
-    BLEByteCharacteristic carControlCharacteristic("2A57", BLERead | BLEWrite); // 2A57 is "Digital Output"
+    BLEStringCharacteristic thermostat_characteristic("2a57", BLERead | BLEWrite, BUFF_SIZE); // 2A57 is "Digital Output"
 
     void setup()
     {
@@ -24,16 +39,20 @@ namespace bluetooth
             }
         }
 
-        BLE.setLocalName("UnoR4 BLE Car");
-        BLE.setAdvertisedService(carService);
+        auto name = generate_name();
+        Serial.print("set name to: ");
+        Serial.println(name);
+
+        BLE.setDeviceName(name.c_str());
+        BLE.setLocalName("UNO_R4_THERMOSTATTER");
+
+        BLE.setAdvertisedService(thermostat_service);
 
         // add the characteristics to the service
-        carService.addCharacteristic(carControlCharacteristic);
+        thermostat_service.addCharacteristic(thermostat_characteristic);
 
         // add the service
-        BLE.addService(carService);
-
-        carControlCharacteristic.writeValue(0);
+        BLE.addService(thermostat_service);
 
         // start advertising
         BLE.advertise();
@@ -57,29 +76,13 @@ namespace bluetooth
             // while the controller is still connected to peripheral:
             while (controller.connected())
             {
-
-                if (carControlCharacteristic.written())
+                if (!thermostat_characteristic.written())
                 {
-
-                    switch (carControlCharacteristic.value())
-                    {
-                    case 01:
-                        Serial.println("LEFT");
-                        break;
-                    case 02:
-                        Serial.println("RIGHT");
-                        break;
-                    case 03:
-                        Serial.println("UP");
-                        break;
-                    case 04:
-                        Serial.println("DOWN");
-                        break;
-                    default: // 0 or invalid control
-                        Serial.println("STOP");
-                        break;
-                    }
+                    continue;
                 }
+                auto value = thermostat_characteristic.value();
+                Serial.println(value);
+                thermostat_characteristic.writeValue("echo: " + value);
             }
 
             // when the central disconnects, print it out:

@@ -15,7 +15,7 @@ void setup()
 
     Serial.println("hello world!");
     bluetooth::setup();
-    weefee::setup();
+    // weefee::setup();
 }
 
 void loop()
@@ -23,6 +23,6 @@ void loop()
     // heart::loop();
     // weather::loop();
     bluetooth::loop();
-    weefee::loop();
+    // weefee::loop();
     // delay(DELAY_MS);
 }

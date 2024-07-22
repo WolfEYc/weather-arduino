@@ -62,6 +62,16 @@ namespace weefee
         Serial.println();
     }
 
+    void setRandomSeed()
+    {
+        uint64_t seed = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            seed |= ((uint64_t)mac[i]) << (8 * i);
+        }
+        randomSeed(seed);
+    }
+
     void setup()
     {
         if (WiFi.status() == WL_NO_MODULE)
@@ -93,6 +103,7 @@ namespace weefee
         Serial.print("You're connected to the network");
         printCurrentNet();
         printWifiData();
+        setRandomSeed();
     }
 
     void loop()
