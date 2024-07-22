@@ -44,7 +44,7 @@ namespace bluetooth
         Serial.println(name);
 
         BLE.setDeviceName(name.c_str());
-        BLE.setLocalName("UNO_R4_THERMOSTATTER");
+        BLE.setLocalName(name.c_str());
 
         BLE.setAdvertisedService(thermostat_service);
 
