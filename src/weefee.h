@@ -3,9 +3,7 @@
 
 #include <SPI.h>
 #include <WiFi.h>
-
-#define SECRET_SSID "Arlo_Network"
-#define SECRET_PASS "M0re$4me"
+#include <EEPROM.h>
 
 namespace weefee
 {
